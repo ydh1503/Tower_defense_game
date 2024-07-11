@@ -4,7 +4,7 @@ import { loadProtos } from './loadProtos.js';
 
 const initServer = async () => {
   try {
-    await loadProtos();
+    //await loadProtos();
     await testAllConnections(pools);
   } catch (e) {
     console.error(e);
