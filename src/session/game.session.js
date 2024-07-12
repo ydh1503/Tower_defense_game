@@ -1,8 +1,8 @@
 import Game from '../classes/models/game.class.js';
 import { gameSessions } from './sessions.js';
 
-export const addGameSession = (id) => {
-  const session = new Game(id);
+export const addGameSession = (id, users) => {
+  const session = new Game(id, users);
   gameSessions.push(session);
   return session;
 };
