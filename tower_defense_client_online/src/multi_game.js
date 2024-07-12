@@ -2,10 +2,10 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 
-if (!localStorage.getItem('token')) {
-  alert('로그인이 필요합니다.');
-  location.href = '/login';
-}
+// if (!localStorage.getItem('token')) {
+//   alert('로그인이 필요합니다.');
+//   location.href = '/login';
+// }
 
 let serverSocket;
 const canvas = document.getElementById('gameCanvas');
@@ -22,7 +22,7 @@ const loader = document.getElementsByClassName('loader')[0];
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 // 게임 데이터
 let towerCost = 0; // 타워 구입 비용
-let monsterSpawnInterval = 0; // 몬스터 생성 주기
+let monsterSpawnInterval = 1000; // 몬스터 생성 주기
 
 // 유저 데이터
 let userGold = 0; // 유저 골드
@@ -190,6 +190,7 @@ function gameLoop() {
     tower.draw(ctx, towerImage);
     tower.updateCooldown();
     monsters.forEach((monster) => {
+      monster.draw(ctx);
       const distance = Math.sqrt(
         Math.pow(tower.x - monster.x, 2) + Math.pow(tower.y - monster.y, 2),
       );
@@ -238,6 +239,33 @@ function gameLoop() {
   requestAnimationFrame(gameLoop); // 지속적으로 다음 프레임에 gameLoop 함수 호출할 수 있도록 함
 }
 
+function generateRandomMonsterPath() {
+  const path = [];
+  let currentX = 0;
+  let currentY = Math.floor(Math.random() * 21) + 500; // 500 ~ 520 범위의 y 시작
+
+  path.push({ x: currentX, y: currentY });
+
+  while (currentX < canvas.width) {
+    currentX += Math.floor(Math.random() * 100) + 50; // 50 ~ 150 범위의 x 증가
+    if (currentX > canvas.width) {
+      currentX = canvas.width;
+    }
+
+    currentY += Math.floor(Math.random() * 200) - 100; // -100 ~ 100 범위의 y 변경
+    if (currentY < 0) {
+      currentY = 0;
+    }
+    if (currentY > canvas.height) {
+      currentY = canvas.height;
+    }
+
+    path.push({ x: currentX, y: currentY });
+  }
+
+  return path;
+}
+
 function initGame() {
   if (isInitGame) {
     return;
@@ -247,6 +275,12 @@ function initGame() {
   bgm.volume = 0.2;
   bgm.play();
 
+  monsterPath = generateRandomMonsterPath();
+  opponentMonsterPath = monsterPath;
+  initialTowerCoords = [getRandomPositionNearPath(200)];
+  opponentInitialTowerCoords = initialTowerCoords;
+  basePosition = monsterPath[monsterPath.length - 1];
+  opponentBasePosition = basePosition;
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
 
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
@@ -277,9 +311,16 @@ Promise.all([
 
   serverSocket.on('connect', () => {
     // TODO. 서버와 연결되면 대결 대기열 큐 진입
+    serverSocket.emit('event', {
+      handlerId: 2,
+      clientVersion: '1.0.0',
+      userId: null,
+      payload: {},
+    });
   });
 
   serverSocket.on('matchFound', (data) => {
+    console.log(data.message);
     // 상대가 매치되면 3초 뒤 게임 시작
     progressBarMessage.textContent = '게임이 3초 뒤에 시작됩니다.';
 
@@ -304,6 +345,10 @@ Promise.all([
         }
       }
     }, 300);
+  });
+
+  serverSocket.on('notification', (data) => {
+    console.log(data.message);
   });
 
   serverSocket.on('gameOver', (data) => {

@@ -2,10 +2,10 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 
-if (!localStorage.getItem('token2')) {
-  alert('로그인이 필요합니다.');
-  location.href = '/login';
-}
+// if (!localStorage.getItem('token2')) {
+//   alert('로그인이 필요합니다.');
+//   location.href = '/login';
+// }
 
 let serverSocket;
 const canvas = document.getElementById('gameCanvas');

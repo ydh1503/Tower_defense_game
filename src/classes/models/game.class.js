@@ -1,31 +1,12 @@
-import {
-  createLocationPacket,
-  gameStartNotification,
-} from '../../utils/notification/game.notification.js';
-import IntervalManager from '../managers/interval.manager.js';
-
-const MAX_PLAYERS = 2;
+import { foundMatchNotification } from '../../utils/notification/game.notification.js';
+// import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
-  constructor(id) {
+  constructor(id, users) {
     this.id = id;
-    this.users = [];
-    this.intervalManger = new IntervalManager();
-    this.state = 'waiting'; // 'waiting', 'inProgress'
-  }
-
-  addUser(user) {
-    if (this.users.length >= MAX_PLAYERS) {
-      throw new Error('Game session is full');
-    }
-    this.users.push(user);
-
-    this.intervalManger.addPlayer(user.id, user.ping.bind(user), 1000);
-    if (this.users.length === MAX_PLAYERS) {
-      setTimeout(() => {
-        this.startGame();
-      }, 3000);
-    }
+    this.users = users;
+    this.startGame();
+    // this.intervalManger = new IntervalManager();
   }
 
   getUser(userId) {
@@ -34,39 +15,22 @@ class Game {
 
   removeUser(userId) {
     this.users = this.users.filter((user) => user.id !== userId);
-    this.intervalManger.removePlayer(userId);
+    // this.intervalManger.removePlayer(userId);
 
     if (this.users.length < MAX_PLAYERS) {
       this.state = 'waiting';
     }
   }
 
-  getMaxLatency() {
-    let maxLatency = 0;
-    this.users.forEach((user) => {
-      maxLatency = Math.max(maxLatency, user.latency);
-    });
-    return maxLatency;
-  }
-
   startGame() {
-    this.state = 'inProgress';
-    const startPacket = gameStartNotification(this.id, Date.now());
-    console.log(this.getMaxLatency());
-
     this.users.forEach((user) => {
-      user.socket.write(startPacket);
-    });
-  }
+      const userData = 'userData'; // 해당 유저 게임 초기 설정 값(몬스터 경로, 초기 타워 위치 등)
+      const opponentData = this.users
+        .filter((opponent) => opponent !== user)
+        .map((opponent) => 'opponentData');
 
-  getAllLocation() {
-    const maxLatency = this.getMaxLatency();
-
-    const locationData = this.users.map((user) => {
-      const { x, y } = user.calculatePosition(maxLatency);
-      return { id: user.id, x, y };
+      foundMatchNotification(user.socket, userData, opponentData, this.id);
     });
-    return createLocationPacket(locationData);
   }
 }
 
