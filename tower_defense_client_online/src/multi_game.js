@@ -260,6 +260,15 @@ function initGame() {
   isInitGame = true;
 }
 
+function sendEvent(handlerId, payload) {
+  serverSocket.emit('event', {
+    handlerId,
+    clientVersion: '1.0.0',
+    userId,
+    payload,
+  });
+}
+
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
 Promise.all([
   new Promise((resolve) => (backgroundImage.onload = resolve)),
@@ -282,13 +291,14 @@ Promise.all([
   });
 
   serverSocket.on('connect', () => {
-    // TODO. 서버와 연결되면 대결 대기열 큐 진입
-    serverSocket.emit('event', {
-      handlerId: 2,
-      clientVersion: '1.0.0',
-      userId: null,
-      payload: {},
-    });
+    // TODO. 서버와 연결되면 대결 대기열 큐 진입 (#2 대결 시작 브랜치)
+    // 수정 -> 서버와 연결된 후 대결 대기열 큐에 추가를 요청하는 이벤트 발송 (#15 게임 초기화 브랜치)
+  });
+
+  serverSocket.on('connection', (data) => {
+    userId = data.uuid;
+    console.log(`connection completed (id: ${userId})`);
+    sendEvent(2, { width: canvas.width, height: canvas.height });
   });
 
   serverSocket.on('matchFound', (data) => {
@@ -332,6 +342,10 @@ Promise.all([
   serverSocket.on('notification', (data) => {
     console.log(data);
     console.log(data.message);
+  });
+
+  serverSocket.on('response', (data) => {
+    console.log(data);
   });
 
   serverSocket.on('gameOver', (data) => {

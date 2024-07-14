@@ -4,11 +4,6 @@ export const sendNotification = (socket, payload, message, eventName = 'notifica
   socket.emit(eventName, { status: 'success', message, payload });
 };
 
-export const startMatching = (socket) => {
-  const payload = { timestamp: Date.now() };
-  return sendNotification(socket, payload, 'start matching');
-};
-
 export const foundMatchNotification = (socket, userData, opponentData, gameId) => {
   const payload = {
     userData: convertMapToObject(userData),
