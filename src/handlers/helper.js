@@ -5,15 +5,15 @@ import handlerMappings from './handlerMapping.js';
 
 export const handleDisconnect = (socket, uuid) => {
   console.log(`User disconnected: ${socket.id}`);
+
+  const matchingSession = getMatchingSession();
+  matchingSession.removeUser(uuid);
 };
 
 export const handleConnection = async (socket, userUUID) => {
   console.log(`New user connected: ${userUUID} with socket ID ${socket.id}`);
 
   const user = addUser(socket, userUUID);
-
-  // const matchingSession = getMatchingSession();
-  // matchingSession.addUser(user);
 
   socket.emit('connection', { uuid: userUUID });
 };
