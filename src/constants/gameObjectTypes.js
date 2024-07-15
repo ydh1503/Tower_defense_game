@@ -5,6 +5,7 @@ const GAME_OBJECT_TYPES = {
     SCORE: 'score',
     LEVEL: 'level',
     GOLD: 'gold',
+    KILLCOUNT: 'killCount',
   },
   OBJECT_ARRAY: {
     TOWERS: 'towers',

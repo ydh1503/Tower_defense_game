@@ -31,6 +31,7 @@ class GameManager extends BaseManager {
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.LEVEL, 0);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.SCORE, 0);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.GOLD, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.KILLCOUNT, 0);
   }
 
   addObject(playerId, type, object) {
