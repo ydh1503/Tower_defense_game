@@ -1,5 +1,7 @@
+import { cliTowerhandler } from './cliTower.handler.js'
+
 const handlerMappings = {
-  //1: 함수 이름,
+  12: cliTowerhandler
 };
 
 export default handlerMappings;
