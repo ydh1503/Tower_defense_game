@@ -309,6 +309,7 @@ Promise.all([
     opponentMonsterPath = data.payload.opponentData[0].path.path;
     initialTowerCoords = [getRandomPositionNearPath(200)]; // 초기 타워 배치
     opponentInitialTowerCoords = data.payload.opponentData[0].towers;
+    baseHp = data.payload.userData.base.maxHp;
     basePosition = data.payload.userData.base;
     opponentBasePosition = data.payload.opponentData[0].base;
 
@@ -418,4 +419,18 @@ function deadOpponentMonster(monsterIndex) {
   opponentMonsters.splice(monsterIndex, 1);
 }
 
-export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster };
+function updateBaseHp(baseHp, isOpponent = false) {
+  if (!isOpponent) {
+    base.hp = baseHp;
+  } else {
+    opponentBase.hp = baseHp;
+  }
+}
+
+export {
+  pushMonsterArray,
+  pushOpponentMonsterArray,
+  deadMonster,
+  deadOpponentMonster,
+  updateBaseHp,
+};

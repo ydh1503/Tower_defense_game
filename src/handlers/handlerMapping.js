@@ -1,3 +1,4 @@
+import { attackBaseHandler } from './game/base.handler.js';
 import { deadMonsterHandler, spawnMonsterHandler } from './game/monsterHandler.js';
 import startMatchingHandler from './startMatching.handler.js';
 

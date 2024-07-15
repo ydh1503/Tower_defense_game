@@ -1,3 +1,4 @@
+import { attackBaseHandler, attackOpponentBaseHandler } from './base.handler.js';
 import {
   deadMonsterHandler,
   deadOpponentMonsterHandler,
@@ -11,6 +12,8 @@ const handlerMappings = {
   9: spawnOpponentMonsterHandler,
   16: deadMonsterHandler,
   17: deadOpponentMonsterHandler,
+  21: attackBaseHandler,
+  22: attackOpponentBaseHandler,
 };
 
 export default handlerMappings;
