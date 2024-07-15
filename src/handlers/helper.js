@@ -1,17 +1,26 @@
 import { config } from '../config/config.js';
+import { getMatchingSession } from '../session/matching.session.js';
+import { addUser } from '../session/user.session.js';
 import handlerMappings from './handlerMapping.js';
+import { getGameSession } from '../session/game.session.js';
 
-export const handleDisconnect = (socket, uuid) => {
+export const handleDisconnect = async (socket, uuid) => {
   console.log(`User disconnected: ${socket.id}`);
+
+  const matchingSession = getMatchingSession();
+  matchingSession.removeUser(uuid);
 };
 
 export const handleConnection = async (socket, userUUID) => {
   console.log(`New user connected: ${userUUID} with socket ID ${socket.id}`);
+
+  const user = addUser(socket, userUUID);
+
   socket.emit('connection', { uuid: userUUID });
 };
 
 export const handleEvent = async (io, socket, data) => {
-  if (!config.client.clientVersion !== data.clientVersion) {
+  if (config.client.clientVersion !== data.clientVersion) {
     // 만약 일치하는 버전이 없다면 response 이벤트로 fail 결과를 전송합니다.
     socket.emit('response', { status: 'fail', message: 'Client version mismatch' });
     return;
@@ -30,6 +39,7 @@ export const handleEvent = async (io, socket, data) => {
     io.emit('response', response);
     return;
   }
+
   // 해당 유저에게 적절한 response를 전달합니다.
   socket.emit('response', response);
 };
