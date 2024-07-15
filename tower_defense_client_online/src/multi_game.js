@@ -1,3 +1,4 @@
+import { handleNotification, handleResponse } from '../handlers/helper.js';
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
@@ -169,10 +170,16 @@ function placeBase(position, isPlayer) {
 }
 
 function spawnMonster() {
-  const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
-  monsters.push(newMonster);
+  // const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
+  // monsters.push(newMonster);
 
   // TODO. 서버로 몬스터 생성 이벤트 전송
+  const monsterNumber = Math.floor(Math.random() * monsterImages.length);
+  sendEvent(8, {
+    gameId,
+    monsterId: monsterNumber,
+    level: monsterLevel,
+  });
 }
 
 function gameLoop() {
@@ -260,15 +267,6 @@ function initGame() {
   isInitGame = true;
 }
 
-function sendEvent(handlerId, payload) {
-  serverSocket.emit('event', {
-    handlerId,
-    clientVersion: '1.0.0',
-    userId,
-    payload,
-  });
-}
-
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
 Promise.all([
   new Promise((resolve) => (backgroundImage.onload = resolve)),
@@ -340,8 +338,7 @@ Promise.all([
   });
 
   serverSocket.on('notification', (data) => {
-    console.log(data);
-    console.log(data.message);
+    handleNotification(data);
   });
 
   serverSocket.on('response', (data) => {
@@ -369,6 +366,10 @@ Promise.all([
       });
     }
   });
+
+  serverSocket.on('response', (data) => {
+    handleResponse(data);
+  });
 });
 
 const buyTowerButton = document.createElement('button');
@@ -384,3 +385,24 @@ buyTowerButton.style.display = 'none';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+function sendEvent(handlerId, payload) {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: '1.0.0',
+    handlerId,
+    payload,
+  });
+}
+
+function pushMonsterArray(monsterNumber, level) {
+  const newMonster = new Monster(monsterPath, monsterImages, level, monsterNumber);
+  monsters.push(newMonster);
+}
+
+function pushOpponentMonsterArray(monsterNumber, level) {
+  const newMonster = new Monster(opponentMonsterPath, monsterImages, level, monsterNumber);
+  opponentMonsters.push(newMonster);
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray };
