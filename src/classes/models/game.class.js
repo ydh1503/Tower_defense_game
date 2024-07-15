@@ -24,6 +24,10 @@ class Game {
     // this.intervalManger.removePlayer(userId);
   }
 
+  getOpponentUserSocket(userId) {
+    return this.users.find((user) => user.id !== userId).socket;
+  }
+
   initGame() {
     this.users.forEach((user) => {
       this.gameManager.addPlayer(user.id, user.canvas);

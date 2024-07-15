@@ -10,3 +10,14 @@ export const handleResponse = (data) => {
   // 적절한 핸들러 호출
   handler(data);
 };
+
+export const handleNotification = (data) => {
+  console.log(data);
+
+  const handler = handlerMappings[data.payload.handlerId];
+  if (!handler) {
+    return;
+  }
+  // 적절한 핸들러 호출
+  handler(data.payload);
+};

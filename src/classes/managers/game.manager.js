@@ -28,15 +28,19 @@ class GameManager extends BaseManager {
       );
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.TOWERS, []);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.MONSTERS, []);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.LEVEL, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.SCORE, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.GOLD, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.KILLCOUNT, 0);
   }
 
   addObject(playerId, type, object) {
     if (this.gameObjects.has(playerId)) {
       const playerObjects = this.gameObjects.get(playerId);
       if (playerObjects.has(type)) {
-        if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT, type)) {
+        if (Object.values(GAME_OBJECT_TYPES.OBJECT).includes(type)) {
           playerObjects.set(type, object);
-        } else if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT_ARRAY, type)) {
+        } else if (Object.values(GAME_OBJECT_TYPES.OBJECT_ARRAY).includes(type)) {
           playerObjects.get(type).push(object);
         }
       }
@@ -53,9 +57,9 @@ class GameManager extends BaseManager {
     if (this.gameObjects.has(playerId)) {
       const playerObjects = this.gameObjects.get(playerId);
       if (playerObjects.has(type)) {
-        if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT, type)) {
+        if (Object.values(GAME_OBJECT_TYPES.OBJECT).includes(type)) {
           playerObjects.delete(type);
-        } else if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT_ARRAY, type)) {
+        } else if (Object.values(GAME_OBJECT_TYPES.OBJECT_ARRAY).includes(type)) {
           const object = playerObjects.get(type).splice(objectIndex, 1);
           return object;
         }

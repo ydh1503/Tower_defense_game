@@ -1,3 +1,4 @@
+import { handleNotification, handleResponse } from '../handlers/helper.js';
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
@@ -169,10 +170,12 @@ function placeBase(position, isPlayer) {
 }
 
 function spawnMonster() {
-  const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
-  monsters.push(newMonster);
-
-  // TODO. 서버로 몬스터 생성 이벤트 전송
+  const monsterNumber = Math.floor(Math.random() * monsterImages.length);
+  sendEvent(8, {
+    gameId,
+    monsterId: monsterNumber,
+    level: monsterLevel,
+  });
 }
 
 function gameLoop() {
@@ -221,8 +224,12 @@ function gameLoop() {
         monsters.splice(i, 1);
       }
     } else {
-      // TODO. 몬스터 사망 이벤트 전송
-      monsters.splice(i, 1);
+      sendEvent(16, {
+        gameId,
+        monsterIndex: i,
+        monsterId: monster.monsterNumber,
+        level: monster.level,
+      });
     }
   }
 
@@ -259,15 +266,6 @@ function initGame() {
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
-}
-
-function sendEvent(handlerId, payload) {
-  serverSocket.emit('event', {
-    handlerId,
-    clientVersion: '1.0.0',
-    userId,
-    payload,
-  });
 }
 
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
@@ -341,8 +339,7 @@ Promise.all([
   });
 
   serverSocket.on('notification', (data) => {
-    console.log(data);
-    console.log(data.message);
+    handleNotification(data);
   });
 
   serverSocket.on('response', (data) => {
@@ -370,6 +367,10 @@ Promise.all([
       });
     }
   });
+
+  serverSocket.on('response', (data) => {
+    handleResponse(data);
+  });
 });
 
 const buyTowerButton = document.createElement('button');
@@ -385,3 +386,36 @@ buyTowerButton.style.display = 'none';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+function sendEvent(handlerId, payload) {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: '1.0.0',
+    handlerId,
+    payload,
+  });
+}
+
+function pushMonsterArray(monsterNumber, level) {
+  const newMonster = new Monster(monsterPath, monsterImages, level, monsterNumber);
+  monsters.push(newMonster);
+}
+
+function pushOpponentMonsterArray(monsterNumber, level) {
+  const newMonster = new Monster(opponentMonsterPath, monsterImages, level, monsterNumber);
+  opponentMonsters.push(newMonster);
+}
+
+function deadMonster(monsterIndex, updateScore, gold, level) {
+  score = updateScore;
+  userGold = gold;
+  monsterLevel = level;
+
+  monsters.splice(monsterIndex, 1);
+}
+
+function deadOpponentMonster(monsterIndex) {
+  opponentMonsters.splice(monsterIndex, 1);
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster };
