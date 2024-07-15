@@ -1,4 +1,4 @@
-import { spawnMonsterHandler, spawnOpponentMonsterHandler } from './monsterHandler';
+import { spawnMonsterHandler, spawnOpponentMonsterHandler } from './monsterHandler.js';
 
 const handlerMappings = {
   //1: 함수 이름,
