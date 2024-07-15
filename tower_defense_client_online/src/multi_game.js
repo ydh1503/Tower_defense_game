@@ -220,13 +220,7 @@ function gameLoop() {
         attackedSound.volume = 0.3;
         attackedSound.play();
         // TODO. 몬스터가 기지를 공격했을 때 서버로 이벤트 전송
-        //monsters.splice(i, 1);
-        sendEvent(16, {
-          gameId,
-          monsterIndex: i,
-          monsterId: monster.monsterNumber,
-          level: monster.level,
-        });
+        monsters.splice(i, 1);
       }
     } else {
       sendEvent(16, {
