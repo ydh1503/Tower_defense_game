@@ -20,7 +20,7 @@ export const config = {
     host: HOST,
   },
   client: {
-    clientVersion: CLIENT_VERSION,
+    version: CLIENT_VERSION,
   },
   database: {
     GAME_DB: {
