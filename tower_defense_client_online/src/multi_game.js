@@ -170,10 +170,6 @@ function placeBase(position, isPlayer) {
 }
 
 function spawnMonster() {
-  // const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
-  // monsters.push(newMonster);
-
-  // TODO. 서버로 몬스터 생성 이벤트 전송
   const monsterNumber = Math.floor(Math.random() * monsterImages.length);
   sendEvent(8, {
     gameId,
@@ -227,8 +223,12 @@ function gameLoop() {
         monsters.splice(i, 1);
       }
     } else {
-      // TODO. 몬스터 사망 이벤트 전송
-      monsters.splice(i, 1);
+      sendEvent(16, {
+        gameId,
+        monsterIndex: i,
+        monsterId: monster.monsterNumber,
+        level: monster.level,
+      });
     }
   }
 
@@ -405,4 +405,16 @@ function pushOpponentMonsterArray(monsterNumber, level) {
   opponentMonsters.push(newMonster);
 }
 
-export { pushMonsterArray, pushOpponentMonsterArray };
+function deadMonster(monsterIndex, updateScore, gold, level) {
+  score = updateScore;
+  userGold = gold;
+  monsterLevel = level;
+
+  monsters.splice(monsterIndex, 1);
+}
+
+function deadOpponentMonster(monsterIndex) {
+  opponentMonsters.splice(monsterIndex, 1);
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster };
