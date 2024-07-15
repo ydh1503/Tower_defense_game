@@ -58,14 +58,21 @@ export const deadMonsterHandler = (uuid, payload) => {
   let score = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.SCORE);
   let gold = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.GOLD);
   let monsterLevel = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.LEVEL);
+  let killCount = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.KILLCOUNT);
 
-  // 추후 기획에 맞게 변경 필요
-  score += 100;
-  gold += 100;
-  monsterLevel += 1;
+  score += 100 + monsterData[monsterIndex].level * 10;
+  killCount += 1;
+
+  if (killCount >= 20) {
+    killCount = 0;
+    gold += 1000 + 200 * monsterLevel;
+    monsterLevel += 1;
+  }
+
   gameSession.gameManager.addObject(uuid, GAME_OBJECT_TYPES.OBJECT.SCORE, score);
   gameSession.gameManager.addObject(uuid, GAME_OBJECT_TYPES.OBJECT.GOLD, gold);
   gameSession.gameManager.addObject(uuid, GAME_OBJECT_TYPES.OBJECT.LEVEL, monsterLevel);
+  gameSession.gameManager.addObject(uuid, GAME_OBJECT_TYPES.OBJECT.KILLCOUNT, killCount);
 
   return {
     status: 'success',
