@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { addGameSession } from '../../session/game.session.js';
-import { startMatching } from '../../utils/notification/game.notification.js';
 
 const USERS_PER_GAME = 2;
 
@@ -11,7 +10,6 @@ class Matching {
 
   addUser(user) {
     this.users.push(user);
-    startMatching(user.socket);
     this.matchUsers();
   }
 
