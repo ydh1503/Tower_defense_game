@@ -1,8 +1,8 @@
+import { handleNotification, handleResponse } from '../handlers/helper.js';
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './constants.js';
-import { handleResponse, handleNotification } from '../handlers/helper.js';
 // if (!localStorage.getItem('token')) {
 //   alert('로그인이 필요합니다.');
 //   location.href = '/login';
@@ -168,10 +168,16 @@ function placeBase(position, isPlayer) {
 }
 
 function spawnMonster() {
-  const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
-  monsters.push(newMonster);
+  // const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
+  // monsters.push(newMonster);
 
   // TODO. 서버로 몬스터 생성 이벤트 전송
+  const monsterNumber = Math.floor(Math.random() * monsterImages.length);
+  sendEvent(8, {
+    gameId,
+    monsterId: monsterNumber,
+    level: monsterLevel,
+  });
 }
 
 function gameLoop() {
@@ -360,15 +366,6 @@ Promise.all([
   });
 });
 
-const sendEvent = (handlerId, payload) => {
-  serverSocket.emit('event', {
-    userId,
-    clientVersion: CLIENT_VERSION,
-    handlerId,
-    payload,
-  });
-};
-
 const buyTowerButton = document.createElement('button');
 buyTowerButton.textContent = '타워 구입';
 buyTowerButton.style.position = 'absolute';
@@ -383,4 +380,23 @@ buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
 
-export { sendEvent };
+function sendEvent(handlerId, payload) {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: '1.0.0',
+    handlerId,
+    payload,
+  });
+}
+
+function pushMonsterArray(monsterNumber, level) {
+  const newMonster = new Monster(monsterPath, monsterImages, level, monsterNumber);
+  monsters.push(newMonster);
+}
+
+function pushOpponentMonsterArray(monsterNumber, level) {
+  const newMonster = new Monster(opponentMonsterPath, monsterImages, level, monsterNumber);
+  opponentMonsters.push(newMonster);
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray };

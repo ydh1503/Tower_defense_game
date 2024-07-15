@@ -19,7 +19,6 @@ export const handleNotification = async (data) => {
   if (!handler) {
     return;
   }
-
   // 적절한 핸들러 호출
   handler(data.payload);
 };
