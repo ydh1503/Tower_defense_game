@@ -411,8 +411,8 @@ function pushOpponentMonsterArray(monsterNumber, level) {
   opponentMonsters.push(newMonster);
 }
 
-function deadMonster(monsterIndex, score, gold, level) {
-  score = score;
+function deadMonster(monsterIndex, updateScore, gold, level) {
+  score = updateScore;
   userGold = gold;
   monsterLevel = level;
 

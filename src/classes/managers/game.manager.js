@@ -56,9 +56,9 @@ class GameManager extends BaseManager {
     if (this.gameObjects.has(playerId)) {
       const playerObjects = this.gameObjects.get(playerId);
       if (playerObjects.has(type)) {
-        if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT, type)) {
+        if (Object.values(GAME_OBJECT_TYPES.OBJECT).includes(type)) {
           playerObjects.delete(type);
-        } else if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT_ARRAY, type)) {
+        } else if (Object.values(GAME_OBJECT_TYPES.OBJECT_ARRAY).includes(type)) {
           const object = playerObjects.get(type).splice(objectIndex, 1);
           return object;
         }

@@ -40,8 +40,6 @@ export const deadMonsterHandler = (uuid, payload) => {
     GAME_OBJECT_TYPES.OBJECT_ARRAY.MONSTERS,
   );
 
-  console.log(monsterData);
-
   if (
     monsterData[monsterIndex].monsterId !== monsterId &&
     monsterData[monsterIndex].level !== level
@@ -52,7 +50,7 @@ export const deadMonsterHandler = (uuid, payload) => {
     };
   }
 
-  // 몬스터 삭제 필요
+  gameSession.gameManager.removeObject(uuid, GAME_OBJECT_TYPES.OBJECT_ARRAY.MONSTERS, monsterIndex);
 
   const opponentUserSocket = gameSession.getOpponentUserSocket(uuid);
   sendNotification(opponentUserSocket, { handlerId: 17, monsterIndex }, '적 몬스터가 죽었습니다.');
@@ -62,9 +60,6 @@ export const deadMonsterHandler = (uuid, payload) => {
   let monsterLevel = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.LEVEL);
 
   // 추후 기획에 맞게 변경 필요
-
-  console.log(score, gold, monsterLevel);
-
   score += 100;
   gold += 100;
   monsterLevel += 1;
