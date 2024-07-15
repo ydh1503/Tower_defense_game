@@ -31,7 +31,7 @@ let towerCost = 0; // 타워 구입 비용
 let monsterSpawnInterval = 1000; // 몬스터 생성 주기
 
 // 유저 데이터
-let userGold = 0; // 유저 골드
+export let userGold = 0; // 유저 골드
 let base; // 기지 객체
 let baseHp = 0; // 기지 체력
 let monsterLevel = 0; // 몬스터 레벨
@@ -118,26 +118,6 @@ function drawRotatedImage(image, x, y, width, height, angle, context) {
   context.restore();
 }
 
-function getRandomPositionNearPath(maxDistance) {
-  const segmentIndex = Math.floor(Math.random() * (monsterPath.length - 1));
-  const startX = monsterPath[segmentIndex].x;
-  const startY = monsterPath[segmentIndex].y;
-  const endX = monsterPath[segmentIndex + 1].x;
-  const endY = monsterPath[segmentIndex + 1].y;
-
-  const t = Math.random();
-  const posX = startX + t * (endX - startX);
-  const posY = startY + t * (endY - startY);
-
-  const offsetX = (Math.random() - 0.5) * 2 * maxDistance;
-  const offsetY = (Math.random() - 0.5) * 2 * maxDistance;
-
-  return {
-    x: posX + offsetX,
-    y: posY + offsetY,
-  };
-}
-
 function placeInitialTowers(initialTowerCoords, initialTowers, context) {
   initialTowerCoords.forEach((towerCoords) => {
     const tower = new Tower(towerCoords.x, towerCoords.y);
@@ -147,14 +127,8 @@ function placeInitialTowers(initialTowerCoords, initialTowers, context) {
 }
 
 function placeNewTower() {
-  // 타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치
-  // if (userGold < towerCost) {
-  //   alert('골드가 부족합니다.');
-  //   return;
-  // }
-
-  const { x, y } = getRandomPositionNearPath(200);
-  sendEvent(11, { x, y, gameId });
+// 타워 구입 이벤트
+  sendEvent(11, { gameId });
 }
 
 function placeBase(position, isPlayer) {
@@ -168,10 +142,6 @@ function placeBase(position, isPlayer) {
 }
 
 function spawnMonster() {
-  // const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
-  // monsters.push(newMonster);
-
-  // TODO. 서버로 몬스터 생성 이벤트 전송
   const monsterNumber = Math.floor(Math.random() * monsterImages.length);
   sendEvent(8, {
     gameId,
@@ -225,8 +195,12 @@ function gameLoop() {
         monsters.splice(i, 1);
       }
     } else {
-      // TODO. 몬스터 사망 이벤트 전송
-      monsters.splice(i, 1);
+      sendEvent(16, {
+        gameId,
+        monsterIndex: i,
+        monsterId: monster.monsterNumber,
+        level: monster.level,
+      });
     }
   }
 
@@ -304,10 +278,11 @@ Promise.all([
     gameId = data.payload.gameId;
     monsterPath = data.payload.userData.path.path; // path, base, towers, monsters (임시)
     opponentMonsterPath = data.payload.opponentData[0].path.path;
-    initialTowerCoords = [getRandomPositionNearPath(200)]; // 초기 타워 배치
+    initialTowerCoords = data.payload.userData.towers; // 초기 타워 배치
     opponentInitialTowerCoords = data.payload.opponentData[0].towers;
     basePosition = data.payload.userData.base;
     opponentBasePosition = data.payload.opponentData[0].base;
+    userGold = data.payload.userData.gold;
 
     // 상대가 매치되면 3초 뒤 게임 시작
     progressBarMessage.textContent = '게임이 3초 뒤에 시작됩니다.';
@@ -399,4 +374,29 @@ function pushOpponentMonsterArray(monsterNumber, level) {
   opponentMonsters.push(newMonster);
 }
 
-export { pushMonsterArray, pushOpponentMonsterArray };
+function deadMonster(monsterIndex, updateScore, gold, level) {
+  score = updateScore;
+  userGold = gold;
+  monsterLevel = level;
+
+  monsters.splice(monsterIndex, 1);
+}
+
+function deadOpponentMonster(monsterIndex) {
+  opponentMonsters.splice(monsterIndex, 1);
+}
+
+function addTower(userId, x, y, gold) {
+  if (userId) {
+    userGold = gold;
+    const tower = new Tower(x, y);
+    towers.push(tower);
+    tower.draw(ctx, towerImage);
+  } else {
+    const tower = new Tower(x, y);
+    opponentTowers.push(tower);
+    tower.draw(opponentCtx, towerImage);
+  }
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster, addTower };

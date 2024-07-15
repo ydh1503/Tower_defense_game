@@ -2,6 +2,7 @@
 
 import GAME_OBJECT_TYPES from '../../constants/gameObjectTypes.js';
 import Base from '../models/gameObject/base.class.js';
+import Tower from '../models/gameObject/tower.class.js';
 import Path from '../models/gameObject/path.class.js';
 import BaseManager from './base.manager.js';
 
@@ -26,17 +27,24 @@ class GameManager extends BaseManager {
         GAME_OBJECT_TYPES.OBJECT.BASE,
         new Base(path[path.length - 1].x, path[path.length - 1].y, BASE_MAX_HP),
       );
-    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.TOWERS, []);
+    const towers = []
+    for(let initTower = 0; initTower < 2; initTower++) {
+      towers.push(new Tower(path));
+    }
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.TOWERS, towers);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.MONSTERS, []);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.LEVEL, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.SCORE, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.GOLD, 1000);
   }
 
   addObject(playerId, type, object) {
     if (this.gameObjects.has(playerId)) {
       const playerObjects = this.gameObjects.get(playerId);
       if (playerObjects.has(type)) {
-        if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT, type)) {
+        if (Object.values(GAME_OBJECT_TYPES.OBJECT).includes(type)) {
           playerObjects.set(type, object);
-        } else if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT_ARRAY, type)) {
+        } else if (Object.values(GAME_OBJECT_TYPES.OBJECT_ARRAY).includes(type)) {
           playerObjects.get(type).push(object);
         }
       }
@@ -53,9 +61,9 @@ class GameManager extends BaseManager {
     if (this.gameObjects.has(playerId)) {
       const playerObjects = this.gameObjects.get(playerId);
       if (playerObjects.has(type)) {
-        if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT, type)) {
+        if (Object.values(GAME_OBJECT_TYPES.OBJECT).includes(type)) {
           playerObjects.delete(type);
-        } else if (Object.hasOwn(GAME_OBJECT_TYPES.OBJECT_ARRAY, type)) {
+        } else if (Object.values(GAME_OBJECT_TYPES.OBJECT_ARRAY).includes(type)) {
           const object = playerObjects.get(type).splice(objectIndex, 1);
           return object;
         }

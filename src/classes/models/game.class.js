@@ -1,7 +1,4 @@
-import {
-  foundMatchNotification,
-  sendNotification,
-} from '../../utils/notification/game.notification.js';
+import { foundMatchNotification } from '../../utils/notification/game.notification.js';
 import GameManager from '../managers/game.manager.js';
 // import IntervalManager from '../managers/interval.manager.js';
 
@@ -23,14 +20,8 @@ class Game {
     // this.intervalManger.removePlayer(userId);
   }
 
-  spawnMonster(userId, payload) {
-    const opponentUserSocket = this.users.find((user) => user.id !== userId).socket;
-    sendNotification(opponentUserSocket, payload, '적 몬스터가 생성되었습니다.');
-  }
-
-  updateTower(userId, payload){
-    const opponentUserSocket = this.users.find((user) => user.id !== userId).socket;
-    sendNotification(opponentUserSocket, payload, '적 타워가 생성되었습니다.');
+  getOpponentUserSocket(userId) {
+    return this.users.find((user) => user.id !== userId).socket;
   }
 
   initGame() {
@@ -46,7 +37,6 @@ class Game {
       const opponentData = this.users
         .filter((opponent) => opponent !== user)
         .map((opponent) => this.gameManager.getPlayer(opponent.id));
-
       foundMatchNotification(user.socket, userData, opponentData, this.id);
     });
   }
