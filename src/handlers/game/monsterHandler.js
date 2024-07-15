@@ -60,7 +60,7 @@ export const deadMonsterHandler = (uuid, payload) => {
   let monsterLevel = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.LEVEL);
   let killCount = gameSession.gameManager.getObject(uuid, GAME_OBJECT_TYPES.OBJECT.KILLCOUNT);
 
-  score += 100 + monsterLevel * 10;
+  score += 100 + monsterData[monsterIndex].level * 10;
   killCount += 1;
 
   if (killCount >= 20) {
