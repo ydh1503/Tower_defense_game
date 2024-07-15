@@ -13,7 +13,6 @@ import {
   HOST,
   PORT,
 } from '../constants/env.js';
-import { PACKET_TYPE_LENGTH, TOTAL_LENGTH } from '../constants/header.js';
 
 export const config = {
   server: {
@@ -21,11 +20,7 @@ export const config = {
     host: HOST,
   },
   client: {
-    version: CLIENT_VERSION,
-  },
-  packet: {
-    totalLength: TOTAL_LENGTH,
-    typeLength: PACKET_TYPE_LENGTH,
+    clientVersion: CLIENT_VERSION,
   },
   database: {
     GAME_DB: {
