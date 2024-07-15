@@ -1,4 +1,6 @@
 import {
+  attackedMonster,
+  attackedOpponentMonster,
   deadMonster,
   deadOpponentMonster,
   pushMonsterArray,
@@ -25,4 +27,14 @@ export const deadMonsterHandler = (payload) => {
 export const deadOpponentMonsterHandler = (payload) => {
   const { monsterIndex } = payload;
   deadOpponentMonster(monsterIndex);
+};
+
+export const attackedMonsterHandler = (payload) => {
+  const { towerIndex, monsterIndex } = payload;
+  attackedMonster(towerIndex, monsterIndex);
+};
+
+export const attackedOpponentMonsterHandler = (payload) => {
+  const { towerIndex, monsterIndex } = payload;
+  attackedOpponentMonster(towerIndex, monsterIndex);
 };

@@ -84,3 +84,23 @@ export const deadMonsterHandler = (uuid, payload) => {
     level: monsterLevel,
   };
 };
+
+export const attackedMonsterHandler = (uuid, payload) => {
+  const { gameId, towerIndex, monsterIndex } = payload;
+
+  const gameSession = getGameSession(gameId);
+  const opponentUserSocket = gameSession.getOpponentUserSocket(uuid);
+  sendNotification(
+    opponentUserSocket,
+    { handlerId: 13, towerIndex, monsterIndex },
+    '적 타워가 적 몬스터를 공격했습니다.',
+  );
+
+  return {
+    status: 'success',
+    message: '타워가 몬스터를 공격했습니다.',
+    handlerId: 12,
+    towerIndex,
+    monsterIndex,
+  };
+};
