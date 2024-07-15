@@ -1,31 +1,17 @@
 import {
-  createLocationPacket,
-  gameStartNotification,
+  foundMatchNotification,
+  sendNotification,
 } from '../../utils/notification/game.notification.js';
-import IntervalManager from '../managers/interval.manager.js';
-
-const MAX_PLAYERS = 2;
+import GameManager from '../managers/game.manager.js';
+// import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
-  constructor(id) {
+  constructor(id, users) {
     this.id = id;
-    this.users = [];
-    this.intervalManger = new IntervalManager();
-    this.state = 'waiting'; // 'waiting', 'inProgress'
-  }
-
-  addUser(user) {
-    if (this.users.length >= MAX_PLAYERS) {
-      throw new Error('Game session is full');
-    }
-    this.users.push(user);
-
-    this.intervalManger.addPlayer(user.id, user.ping.bind(user), 1000);
-    if (this.users.length === MAX_PLAYERS) {
-      setTimeout(() => {
-        this.startGame();
-      }, 3000);
-    }
+    this.users = users;
+    this.gameManager = new GameManager();
+    this.startGame();
+    // this.intervalManger = new IntervalManager();
   }
 
   getUser(userId) {
@@ -34,39 +20,35 @@ class Game {
 
   removeUser(userId) {
     this.users = this.users.filter((user) => user.id !== userId);
-    this.intervalManger.removePlayer(userId);
-
-    if (this.users.length < MAX_PLAYERS) {
-      this.state = 'waiting';
-    }
+    // this.intervalManger.removePlayer(userId);
   }
 
-  getMaxLatency() {
-    let maxLatency = 0;
+  spawnMonster(userId, payload) {
+    const opponentUserSocket = this.users.find((user) => user.id !== userId).socket;
+    sendNotification(opponentUserSocket, payload, '적 몬스터가 생성되었습니다.');
+  }
+
+  updateTower(userId, payload){
+    const opponentUserSocket = this.users.find((user) => user.id !== userId).socket;
+    sendNotification(opponentUserSocket, payload, '적 타워가 생성되었습니다.');
+  }
+
+  initGame() {
     this.users.forEach((user) => {
-      maxLatency = Math.max(maxLatency, user.latency);
+      this.gameManager.addPlayer(user.id, user.canvas);
     });
-    return maxLatency;
   }
 
   startGame() {
-    this.state = 'inProgress';
-    const startPacket = gameStartNotification(this.id, Date.now());
-    console.log(this.getMaxLatency());
-
+    this.initGame();
     this.users.forEach((user) => {
-      user.socket.write(startPacket);
-    });
-  }
+      const userData = this.gameManager.getPlayer(user.id); // 해당 유저 게임 초기 설정 값(몬스터 경로, 기지 위치 등)
+      const opponentData = this.users
+        .filter((opponent) => opponent !== user)
+        .map((opponent) => this.gameManager.getPlayer(opponent.id));
 
-  getAllLocation() {
-    const maxLatency = this.getMaxLatency();
-
-    const locationData = this.users.map((user) => {
-      const { x, y } = user.calculatePosition(maxLatency);
-      return { id: user.id, x, y };
+      foundMatchNotification(user.socket, userData, opponentData, this.id);
     });
-    return createLocationPacket(locationData);
   }
 }
 
