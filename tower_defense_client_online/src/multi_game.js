@@ -223,33 +223,6 @@ function gameLoop() {
   requestAnimationFrame(gameLoop); // 지속적으로 다음 프레임에 gameLoop 함수 호출할 수 있도록 함
 }
 
-function generateRandomMonsterPath() {
-  const path = [];
-  let currentX = 0;
-  let currentY = Math.floor(Math.random() * 21) + 500; // 500 ~ 520 범위의 y 시작
-
-  path.push({ x: currentX, y: currentY });
-
-  while (currentX < canvas.width) {
-    currentX += Math.floor(Math.random() * 100) + 50; // 50 ~ 150 범위의 x 증가
-    if (currentX > canvas.width) {
-      currentX = canvas.width;
-    }
-
-    currentY += Math.floor(Math.random() * 200) - 100; // -100 ~ 100 범위의 y 변경
-    if (currentY < 0) {
-      currentY = 0;
-    }
-    if (currentY > canvas.height) {
-      currentY = canvas.height;
-    }
-
-    path.push({ x: currentX, y: currentY });
-  }
-
-  return path;
-}
-
 function initGame() {
   if (isInitGame) {
     return;
@@ -259,12 +232,6 @@ function initGame() {
   bgm.volume = 0.2;
   bgm.play();
 
-  monsterPath = generateRandomMonsterPath();
-  opponentMonsterPath = monsterPath;
-  initialTowerCoords = [getRandomPositionNearPath(200)];
-  opponentInitialTowerCoords = initialTowerCoords;
-  basePosition = monsterPath[monsterPath.length - 1];
-  opponentBasePosition = basePosition;
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
 
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성

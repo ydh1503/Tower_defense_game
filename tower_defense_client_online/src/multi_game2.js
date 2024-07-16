@@ -1,3 +1,4 @@
+import { handleResponse } from '../handlers/helper.js';
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
@@ -164,10 +165,17 @@ function placeBase(position, isPlayer) {
 }
 
 function spawnMonster() {
-  const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
-  monsters.push(newMonster);
+  // const newMonster = new Monster(monsterPath, monsterImages, monsterLevel);
+  // monsters.push(newMonster);
 
   // TODO. 서버로 몬스터 생성 이벤트 전송
+  const monsterNumber = Math.floor(Math.random() * monsterImages.length);
+  sendEvent(8, {
+    monsterId: monsterNumber,
+    level: monsterLevel,
+    width: canvas.width,
+    height: canvas.height,
+  });
 }
 
 function gameLoop() {
@@ -262,7 +270,7 @@ Promise.all([
   new Promise((resolve) => (pathImage.onload = resolve)),
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
-  serverSocket = io('http://localhost:3000', {
+  serverSocket = io('http://localhost:5555', {
     auth: {
       token: localStorage.getItem('token2'),
     },
@@ -327,6 +335,10 @@ Promise.all([
       });
     }
   });
+
+  serverSocket.on('response', (data) => {
+    handleResponse(data);
+  });
 });
 
 const buyTowerButton = document.createElement('button');
@@ -342,3 +354,24 @@ buyTowerButton.style.display = 'none';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+function sendEvent(handlerId, payload) {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: CLIENT_VERSION,
+    handlerId,
+    payload,
+  });
+}
+
+function pushMonsterArray(path, level, monsterNumber) {
+  const newMonster = new Monster(path, monsterImages, level, monsterNumber);
+  monsters.push(newMonster);
+}
+
+function pushOpponentMonsterArray(path, level, monsterNumber) {
+  const newMonster = new Monster(path, monsterImages, level, monsterNumber);
+  opponentMonsters.push(newMonster);
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray };
