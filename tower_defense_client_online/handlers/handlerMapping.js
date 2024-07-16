@@ -1,5 +1,7 @@
 import { attackBaseHandler, attackOpponentBaseHandler } from './base.handler.js';
 import {
+  attackedMonsterHandler,
+  attackedOpponentMonsterHandler,
   deadMonsterHandler,
   deadOpponentMonsterHandler,
   spawnMonsterHandler,
@@ -11,7 +13,9 @@ const handlerMappings = {
   //1: 함수 이름,
   8: spawnMonsterHandler,
   9: spawnOpponentMonsterHandler,
-  12: cliTowerhandler,
+  11: cliTowerhandler,
+  12: attackedMonsterHandler,
+  13: attackedOpponentMonsterHandler,
   16: deadMonsterHandler,
   17: deadOpponentMonsterHandler,
   21: attackBaseHandler,
