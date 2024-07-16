@@ -2,7 +2,7 @@ import { handleNotification, handleResponse } from '../handlers/helper.js';
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
-import { CLIENT_VERSION } from './constants.js';
+
 // if (!localStorage.getItem('token')) {
 //   alert('로그인이 필요합니다.');
 //   location.href = '/login';
@@ -188,9 +188,9 @@ function gameLoop() {
     if (monster.hp > 0) {
       const Attacked = monster.move();
       if (Attacked) {
-        // const attackedSound = new Audio('sounds/attacked.wav');
-        // attackedSound.volume = 0.3;
-        // attackedSound.play();
+        const attackedSound = new Audio('sounds/attacked.wav');
+        attackedSound.volume = 0.3;
+        attackedSound.play();
         // TODO. 몬스터가 기지를 공격했을 때 서버로 이벤트 전송
         monsters.splice(i, 1);
       }
