@@ -15,6 +15,4 @@ CREATE TABLE IF NOT EXISTS game_log
     user1_score  INT NOT NULL,
     user2_score  INT NOT NULL,
     end_time     DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user1_id) REFERENCES user(id),
-    FOREIGN KEY (user2_id) REFERENCES user(id)
 );
