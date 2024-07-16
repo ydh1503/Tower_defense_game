@@ -1,24 +1,19 @@
+import { toCamelCase } from '../../utils/transformCase.js';
 import pools from '../database.js';
 import { SQL_QUERIES } from './user.queries.js';
+import { v4 as uuidv4 } from 'uuid';
 
-export const findUserByID = async (id) => {
-  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_ID, [id]);
-  return rows.length > 0; // 해당 ID를 가진 사용자가 존재하면 true, 아니면 false 반환
+export const findUserByDeviceId = async (deviceId) => {
+  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_DEVICE_ID, [deviceId]);
+  return toCamelCase(rows[0]);
+};
+
+export const createUser = async (deviceId) => {
+  const id = uuidv4();
+  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [id, deviceId]);
+  return { id, deviceId };
 };
 
 export const updateUserLogin = async (id) => {
-  await pools.USER_DB.query(SQL_QUERIES.UPDATE_USER_LOGIN, [id]); // 사용자의 로그인 시간 업데이트
-};
-
-export const updateUserScore = async (score, id) => {
-  await pools.USER_DB.query(SQL_QUERIES.UPDATE_USER_SCORE, [score, id]); // 사용자의 점수 업데이트
-};
-
-export const registerUser = async (id, password) => {
-  await pools.USER_DB.query(SQL_QUERIES.INSERT_USER, [id, password]); // 새로운 사용자 등록
-};
-
-export const getPasswordById = async (id) => {
-  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_PASSWORD_BY_ID, [id]);
-  return rows[0]?.password || null; // 해당 ID를 가진 사용자의 비밀번호 반환
+  await pools.USER_DB.query(SQL_QUERIES.UPDATE_USER_LOGIN, [id]);
 };
