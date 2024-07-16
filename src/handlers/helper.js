@@ -2,7 +2,6 @@ import { config } from '../config/config.js';
 import { getMatchingSession } from '../session/matching.session.js';
 import { addUser } from '../session/user.session.js';
 import handlerMappings from './handlerMapping.js';
-import { getGameSession } from '../session/game.session.js';
 
 export const handleDisconnect = async (socket, uuid) => {
   console.log(`User disconnected: ${socket.id}`);

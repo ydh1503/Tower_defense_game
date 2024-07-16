@@ -1,4 +1,4 @@
-import { Monster } from '../../classes/models/gameObject/monster.class.js';
+import Monster from '../../classes/models/gameObject/monster.class.js';
 import GAME_OBJECT_TYPES from '../../constants/gameObjectTypes.js';
 import { getGameSession } from '../../session/game.session.js';
 import { sendNotification } from '../../utils/notification/game.notification.js';

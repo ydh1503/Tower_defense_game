@@ -199,6 +199,7 @@ function gameLoop() {
         attackedSound.volume = 0.3;
         attackedSound.play();
         // TODO. 몬스터가 기지를 공격했을 때 서버로 이벤트 전송
+        sendEvent(21, { gameId, damage: monster.attackPower });
         monsters.splice(i, 1);
       }
     } else {
@@ -285,6 +286,7 @@ Promise.all([
     opponentMonsterPath = data.payload.opponentData[0].path.path;
     initialTowerCoords = data.payload.userData.towers; // 초기 타워 배치
     opponentInitialTowerCoords = data.payload.opponentData[0].towers;
+    baseHp = data.payload.userData.base.maxHp;
     basePosition = data.payload.userData.base;
     opponentBasePosition = data.payload.opponentData[0].base;
     userGold = data.payload.userData.gold;
@@ -400,6 +402,14 @@ function deadOpponentMonster(monsterId) {
   opponentMonsters.splice(monsterIndex, 1);
 }
 
+function updateBaseHp(baseHp, isOpponent = false) {
+  if (!isOpponent) {
+    base.hp = baseHp;
+  } else {
+    opponentBase.hp = baseHp;
+  }
+}
+
 function attackedMonster(towerIndex, monsterId, status) {
   if (status === 'success') {
     const monsterIndex = monsters.findIndex((monster) => monster.id === monsterId);
@@ -432,6 +442,7 @@ export {
   pushOpponentMonsterArray,
   deadMonster,
   deadOpponentMonster,
+  updateBaseHp,
   addTower,
   attackedMonster,
   attackedOpponentMonster,

@@ -27,8 +27,8 @@ class GameManager extends BaseManager {
         GAME_OBJECT_TYPES.OBJECT.BASE,
         new Base(path[path.length - 1].x, path[path.length - 1].y, BASE_MAX_HP),
       );
-    const towers = []
-    for(let initTower = 0; initTower < 2; initTower++) {
+    const towers = [];
+    for (let initTower = 0; initTower < 2; initTower++) {
       towers.push(new Tower(path));
     }
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.TOWERS, towers);
