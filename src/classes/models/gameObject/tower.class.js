@@ -1,4 +1,4 @@
-export class Tower {
+class Tower {
   constructor(path) {
     const { x, y } = this.getRandomPositionNearPath(200, path);
     this.x = x; // 타워 x 좌표
