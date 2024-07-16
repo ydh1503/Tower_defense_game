@@ -198,9 +198,7 @@ function gameLoop() {
         const attackedSound = new Audio('sounds/attacked.wav');
         attackedSound.volume = 0.3;
         attackedSound.play();
-        // TODO. 몬스터가 기지를 공격했을 때 서버로 이벤트 전송
-        sendEvent(21, { gameId, damage: monster.attackPower });
-        monsters.splice(i, 1);
+        sendEvent(21, { gameId, damage: monster.attackPower, monsterId: monster.id });
       }
     } else {
       sendEvent(16, {
@@ -400,10 +398,13 @@ function deadOpponentMonster(monsterId) {
   opponentMonsters.splice(monsterIndex, 1);
 }
 
-function updateBaseHp(baseHp, isOpponent = false) {
+function updateBaseHp(baseHp, monsterId, isOpponent = false) {
   if (!isOpponent) {
+    const monsterIndex = monsters.findIndex((monster) => monster.id === monsterId);
+    monsters.splice(monsterIndex, 1);
     base.hp = baseHp;
   } else {
+    deadOpponentMonster(monsterId);
     opponentBase.hp = baseHp;
   }
 }
