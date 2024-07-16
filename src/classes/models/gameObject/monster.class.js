@@ -1,4 +1,4 @@
-export class Monster {
+class Monster {
   constructor(id, monsterNumber, level) {
     this.id = id;
     this.monsterNumber = monsterNumber; // 몬스터 번호
@@ -7,3 +7,5 @@ export class Monster {
 
   // method 추가
 }
+
+export default Monster;

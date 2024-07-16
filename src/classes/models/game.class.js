@@ -37,7 +37,7 @@ class Game {
       const opponentData = this.users
         .filter((opponent) => opponent !== user)
         .map((opponent) => this.gameManager.getPlayer(opponent.id));
-      
+
       foundMatchNotification(user.socket, userData, opponentData, this.id);
     });
   }
