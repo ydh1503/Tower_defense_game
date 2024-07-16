@@ -1,6 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-import configs from '../util/config.js';
+// import configs from '../util/config.js'; 해당 파일 존재하지 않음
 import jwt from 'jsonwebtoken';
 import { findUserByID, getPasswordById, registerUser } from '../db/user/user.db.js';
 
@@ -45,22 +45,22 @@ const register = async (req, res, next) => {
 
 const login = async (req, res) => {
   try {
-    const jwtSecret = configs.jwtSecret;
+    // const jwtSecret = configs.jwtSecret; configs 변수 import 경로 변경 후 사용
     const { userId, password } = req.body;
 
-    const exists = await findUserByID(userId);
-    if (!exists) {
-      return res.status(409).json({ errorMessage: '존재하지 않는 사용자 입니다!.' });
-    }
+    // const exists = await findUserByID(userId);
+    // if (!exists) {
+    //   return res.status(409).json({ errorMessage: '존재하지 않는 사용자 입니다!.' });
+    // }
 
-    const hashedPassword = await getPasswordById(userId);
-    if (!hashedPassword) {
-      return res.status(404).json({ errorMessage: '서버 DB 오류 : 저장된 비밀번호를 찾을 수 없습니다' });
-    }
-    const passwordMatch = await bcrypt.compare(password, hashedPassword);
-    if (!passwordMatch) {
-      return res.status(401).json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
-    }
+    // const hashedPassword = await getPasswordById(userId);
+    // if (!hashedPassword) {
+    //   return res.status(404).json({ errorMessage: '서버 DB 오류 : 저장된 비밀번호를 찾을 수 없습니다' });
+    // }
+    // const passwordMatch = await bcrypt.compare(password, hashedPassword);
+    // if (!passwordMatch) {
+    //   return res.status(401).json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
+    // }
     const token = jwt.sign({ userId }, jwtSecret, {
       //토큰에 담는 정보
       expiresIn: '24h',
