@@ -10,10 +10,10 @@ import { Tower } from './tower.js';
 
 let serverSocket;
 const canvas = document.getElementById('gameCanvas');
-export const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 
 const opponentCanvas = document.getElementById('opponentCanvas');
-export const opponentCtx = opponentCanvas.getContext('2d');
+const opponentCtx = opponentCanvas.getContext('2d');
 
 const progressBarContainer = document.getElementById('progressBarContainer');
 const progressBarMessage = document.getElementById('progressBarMessage');
@@ -23,7 +23,7 @@ const loader = document.getElementsByClassName('loader')[0];
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
 // 서버 데이터
-export let userId;
+let userId;
 let gameId;
 
 // 게임 데이터
@@ -31,7 +31,7 @@ let towerCost = 0; // 타워 구입 비용
 let monsterSpawnInterval = 1000; // 몬스터 생성 주기
 
 // 유저 데이터
-export let userGold = 0; // 유저 골드
+let userGold = 0; // 유저 골드
 let base; // 기지 객체
 let baseHp = 0; // 기지 체력
 let monsterLevel = 0; // 몬스터 레벨
@@ -39,7 +39,7 @@ let monsterPath; // 몬스터 경로
 let initialTowerCoords; // 초기 타워 좌표
 let basePosition; // 기지 좌표
 const monsters = []; // 유저 몬스터 목록
-export const towers = []; // 유저 타워 목록
+const towers = []; // 유저 타워 목록
 let score = 0; // 게임 점수
 let highScore = 0; // 기존 최고 점수
 
@@ -49,7 +49,7 @@ let opponentMonsterPath; // 상대방 몬스터 경로
 let opponentInitialTowerCoords; // 상대방 초기 타워 좌표
 let opponentBasePosition; // 상대방 기지 좌표
 const opponentMonsters = []; // 상대방 몬스터 목록
-export const opponentTowers = []; // 상대방 타워 목록
+const opponentTowers = []; // 상대방 타워 목록
 
 let isInitGame = false;
 
@@ -57,7 +57,7 @@ let isInitGame = false;
 const backgroundImage = new Image();
 backgroundImage.src = 'images/bg.webp';
 
-export const towerImage = new Image();
+const towerImage = new Image();
 towerImage.src = 'images/tower.png';
 
 const baseImage = new Image();
