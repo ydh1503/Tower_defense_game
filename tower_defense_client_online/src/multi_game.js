@@ -271,6 +271,7 @@ Promise.all([
 
   serverSocket.on('connection', (data) => {
     userId = data.uuid;
+    highScore = data.highScore;
     console.log(`connection completed (id: ${userId})`);
     sendEvent(2, { width: canvas.width, height: canvas.height });
   });
