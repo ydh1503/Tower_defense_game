@@ -118,26 +118,6 @@ function drawRotatedImage(image, x, y, width, height, angle, context) {
   context.restore();
 }
 
-function getRandomPositionNearPath(maxDistance) {
-  const segmentIndex = Math.floor(Math.random() * (monsterPath.length - 1));
-  const startX = monsterPath[segmentIndex].x;
-  const startY = monsterPath[segmentIndex].y;
-  const endX = monsterPath[segmentIndex + 1].x;
-  const endY = monsterPath[segmentIndex + 1].y;
-
-  const t = Math.random();
-  const posX = startX + t * (endX - startX);
-  const posY = startY + t * (endY - startY);
-
-  const offsetX = (Math.random() - 0.5) * 2 * maxDistance;
-  const offsetY = (Math.random() - 0.5) * 2 * maxDistance;
-
-  return {
-    x: posX + offsetX,
-    y: posY + offsetY,
-  };
-}
-
 function placeInitialTowers(initialTowerCoords, initialTowers, context) {
   initialTowerCoords.forEach((towerCoords) => {
     const tower = new Tower(towerCoords.x, towerCoords.y);
@@ -147,16 +127,8 @@ function placeInitialTowers(initialTowerCoords, initialTowers, context) {
 }
 
 function placeNewTower() {
-  // 타워를 구입할 수 있는 자원이 있을 때 타워 구입 후 랜덤 배치
-  if (userGold < towerCost) {
-    alert('골드가 부족합니다.');
-    return;
-  }
-
-  const { x, y } = getRandomPositionNearPath(200);
-  const tower = new Tower(x, y);
-  towers.push(tower);
-  tower.draw(ctx, towerImage);
+// 타워 구입 이벤트
+  sendEvent(11, { gameId });
 }
 
 function placeBase(position, isPlayer) {
@@ -306,10 +278,11 @@ Promise.all([
     gameId = data.payload.gameId;
     monsterPath = data.payload.userData.path.path; // path, base, towers, monsters (임시)
     opponentMonsterPath = data.payload.opponentData[0].path.path;
-    initialTowerCoords = [getRandomPositionNearPath(200)]; // 초기 타워 배치
+    initialTowerCoords = data.payload.userData.towers; // 초기 타워 배치
     opponentInitialTowerCoords = data.payload.opponentData[0].towers;
     basePosition = data.payload.userData.base;
     opponentBasePosition = data.payload.opponentData[0].base;
+    userGold = data.payload.userData.gold;
 
     // 상대가 매치되면 3초 뒤 게임 시작
     progressBarMessage.textContent = '게임이 3초 뒤에 시작됩니다.';
@@ -342,7 +315,7 @@ Promise.all([
   });
 
   serverSocket.on('response', (data) => {
-    console.log(data);
+    handleResponse(data);
   });
 
   serverSocket.on('gameOver', (data) => {
@@ -365,10 +338,6 @@ Promise.all([
         location.reload();
       });
     }
-  });
-
-  serverSocket.on('response', (data) => {
-    handleResponse(data);
   });
 });
 
@@ -417,4 +386,17 @@ function deadOpponentMonster(monsterIndex) {
   opponentMonsters.splice(monsterIndex, 1);
 }
 
-export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster };
+function addTower(userId, x, y, gold) {
+  if (userId) {
+    userGold = gold;
+    const tower = new Tower(x, y);
+    towers.push(tower);
+    tower.draw(ctx, towerImage);
+  } else {
+    const tower = new Tower(x, y);
+    opponentTowers.push(tower);
+    tower.draw(opponentCtx, towerImage);
+  }
+}
+
+export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster, addTower };
