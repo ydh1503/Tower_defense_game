@@ -5,7 +5,7 @@ import {
 } from './game/monsterHandler.js';
 import startMatchingHandler from './startMatching.handler.js';
 import { purchaseTowerHandler } from './game/tower.handler.js';
-import { attackBaseHandler } from '../../tower_defense_client_online/handlers/base.handler.js';
+import { attackBaseHandler } from './game/base.handler.js';
 
 const handlerMappings = {
   // 1: 함수이름,
