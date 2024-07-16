@@ -9,32 +9,32 @@ import {
 
 // 몬스터 스폰 핸들러
 export const spawnMonsterHandler = (payload) => {
-  const { id, level } = payload;
-  pushMonsterArray(id, level);
+  const { id, number, level } = payload;
+  pushMonsterArray(id, number, level);
 };
 
 export const spawnOpponentMonsterHandler = (payload) => {
-  const { id, level } = payload;
-  pushOpponentMonsterArray(id, level);
+  const { id, number, level } = payload;
+  pushOpponentMonsterArray(id, number, level);
 };
 
 // 몬스터 사망 핸들러
 export const deadMonsterHandler = (payload) => {
-  const { monsterIndex, score, gold, level } = payload;
-  deadMonster(monsterIndex, score, gold, level);
+  const { monsterId, score, gold, level } = payload;
+  deadMonster(monsterId, score, gold, level);
 };
 
 export const deadOpponentMonsterHandler = (payload) => {
-  const { monsterIndex } = payload;
-  deadOpponentMonster(monsterIndex);
+  const { monsterId } = payload;
+  deadOpponentMonster(monsterId);
 };
 
 export const attackedMonsterHandler = (payload) => {
-  const { towerIndex, monsterIndex } = payload;
-  attackedMonster(towerIndex, monsterIndex);
+  const { towerIndex, monsterId, status } = payload;
+  attackedMonster(towerIndex, monsterId, status);
 };
 
 export const attackedOpponentMonsterHandler = (payload) => {
-  const { towerIndex, monsterIndex } = payload;
-  attackedOpponentMonster(towerIndex, monsterIndex);
+  const { towerIndex, monsterId } = payload;
+  attackedOpponentMonster(towerIndex, monsterId);
 };

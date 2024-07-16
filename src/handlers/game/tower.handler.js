@@ -19,14 +19,14 @@ export const purchaseTowerHandler = async (uuid, payload) => {
     const { x, y } = towers[towers.length - 1]; // 마지막으로 설치한 타워의 x, y 값을 가져온다.
 
     gameSession.gameManager.addObject(uuid, GAME_OBJECT_TYPES.OBJECT.GOLD, (userGold -= towerCost)); // 서버에 저장된 유저의 골드를 타워 코스트 만큼 뺀다.
-    sendNotification(opponentUserSocket, { handlerId: 12, x, y }, '적 타워가 생성되었습니다.'); // 유저의 골드가 타워 코스트 보다 클 경우 상대 소켓에 이벤트 전송.
+    sendNotification(opponentUserSocket, { handlerId: 11, x, y }, '적 타워가 생성되었습니다.'); // 유저의 골드가 타워 코스트 보다 클 경우 상대 소켓에 이벤트 전송.
 
     return {
       status: 'success',
       message: '구매한 타워가 성공적으로 배치되었습니다.',
       x,
       y,
-      handlerId: 12,
+      handlerId: 11,
       userId: uuid,
       userGold,
     };

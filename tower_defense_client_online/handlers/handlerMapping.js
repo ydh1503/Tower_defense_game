@@ -16,7 +16,7 @@ const handlerMappings = {
   13: attackedOpponentMonsterHandler,
   16: deadMonsterHandler,
   17: deadOpponentMonsterHandler,
-  12: cliTowerhandler,
+  11: cliTowerhandler,
 };
 
 export default handlerMappings;
