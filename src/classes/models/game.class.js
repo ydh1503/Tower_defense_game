@@ -1,4 +1,5 @@
 import GAME_OBJECT_TYPES from '../../constants/gameObjectTypes.js';
+import { createGameLog } from '../../db/game/game.db.js';
 import {
   endGameNotification,
   foundMatchNotification,
@@ -48,17 +49,17 @@ class Game {
 
   endGame() {
     const gameLogs = [];
-    const endTime = Date.now();
+
     this.users.forEach((user) => {
       const score = this.gameManager.getObject(user.id, GAME_OBJECT_TYPES.OBJECT.SCORE);
       const isWin =
         this.gameManager.getObject(user.id, GAME_OBJECT_TYPES.OBJECT.BASE).hp > 0 ? true : false;
 
       endGameNotification(user.socket, isWin, score);
-      gameLogs.push({ userId: user.id, score, isWin });
+      gameLogs.push({ id: user.id, score, isWin });
     });
 
-    // createGameLog(this.id, gameLogs[0], gameLogs[1], endTime);
+    createGameLog(this.id, gameLogs[0], gameLogs[1]);
   }
 }
 
