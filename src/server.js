@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import initSocket from './init/socket.js';
 import { config } from './config/config.js';
-import accountsRouter from './routers/accounts.router.js';
 
 const app = express();
 const server = createServer(app);
@@ -24,4 +23,3 @@ initSocket(server)
     console.error(e);
     process.exit(1);
   });
-
