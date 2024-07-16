@@ -127,7 +127,7 @@ function placeInitialTowers(initialTowerCoords, initialTowers, context) {
 }
 
 function placeNewTower() {
-// 타워 구입 이벤트
+  // 타워 구입 이벤트
   sendEvent(11, { gameId });
 }
 
@@ -145,7 +145,7 @@ function spawnMonster() {
   const monsterNumber = Math.floor(Math.random() * monsterImages.length);
   sendEvent(8, {
     gameId,
-    monsterId: monsterNumber,
+    monsterNumber: monsterNumber,
     level: monsterLevel,
   });
 }
@@ -166,16 +166,23 @@ function gameLoop() {
   ctx.fillText(`현재 레벨: ${monsterLevel}`, 100, 200); // 최고 기록 표시
 
   // 타워 그리기 및 몬스터 공격 처리
-  towers.forEach((tower) => {
+  towers.forEach((tower, towerIndex) => {
     tower.draw(ctx, towerImage);
     tower.updateCooldown();
-    monsters.forEach((monster) => {
+    monsters.forEach((monster, monsterIndex) => {
       monster.draw(ctx);
       const distance = Math.sqrt(
         Math.pow(tower.x - monster.x, 2) + Math.pow(tower.y - monster.y, 2),
       );
       if (distance < tower.range) {
-        tower.attack(monster);
+        const isAttack = tower.isAttack();
+        if (isAttack) {
+          sendEvent(12, {
+            gameId,
+            monsterId: monster.id,
+            towerIndex,
+          });
+        }
       }
     });
   });
@@ -197,9 +204,7 @@ function gameLoop() {
     } else {
       sendEvent(16, {
         gameId,
-        monsterIndex: i,
-        monsterId: monster.monsterNumber,
-        level: monster.level,
+        monsterId: monster.id,
       });
     }
   }
@@ -364,17 +369,25 @@ function sendEvent(handlerId, payload) {
   });
 }
 
-function pushMonsterArray(monsterNumber, level) {
-  const newMonster = new Monster(monsterPath, monsterImages, level, monsterNumber);
+function pushMonsterArray(monsterId, monsterNumber, level) {
+  const newMonster = new Monster(monsterId, monsterPath, monsterImages, level, monsterNumber);
   monsters.push(newMonster);
 }
 
-function pushOpponentMonsterArray(monsterNumber, level) {
-  const newMonster = new Monster(opponentMonsterPath, monsterImages, level, monsterNumber);
+function pushOpponentMonsterArray(monsterId, monsterNumber, level) {
+  const newMonster = new Monster(
+    monsterId,
+    opponentMonsterPath,
+    monsterImages,
+    level,
+    monsterNumber,
+  );
   opponentMonsters.push(newMonster);
 }
 
-function deadMonster(monsterIndex, updateScore, gold, level) {
+function deadMonster(monsterId, updateScore, gold, level) {
+  const monsterIndex = monsters.findIndex((monster) => monster.id === monsterId);
+
   score = updateScore;
   userGold = gold;
   monsterLevel = level;
@@ -382,8 +395,23 @@ function deadMonster(monsterIndex, updateScore, gold, level) {
   monsters.splice(monsterIndex, 1);
 }
 
-function deadOpponentMonster(monsterIndex) {
+function deadOpponentMonster(monsterId) {
+  const monsterIndex = opponentMonsters.findIndex((monster) => monster.id === monsterId);
   opponentMonsters.splice(monsterIndex, 1);
+}
+
+function attackedMonster(towerIndex, monsterId, status) {
+  if (status === 'success') {
+    const monsterIndex = monsters.findIndex((monster) => monster.id === monsterId);
+    towers[towerIndex].attack(monsters[monsterIndex]);
+  } else {
+    towers[towerIndex].cooldown = 0;
+  }
+}
+
+function attackedOpponentMonster(towerIndex, monsterId) {
+  const monsterIndex = opponentMonsters.findIndex((monster) => monster.id === monsterId);
+  opponentTowers[towerIndex].attack(opponentMonsters[monsterIndex]);
 }
 
 function addTower(userId, x, y, gold) {
@@ -399,4 +427,12 @@ function addTower(userId, x, y, gold) {
   }
 }
 
-export { pushMonsterArray, pushOpponentMonsterArray, deadMonster, deadOpponentMonster, addTower };
+export {
+  pushMonsterArray,
+  pushOpponentMonsterArray,
+  deadMonster,
+  deadOpponentMonster,
+  addTower,
+  attackedMonster,
+  attackedOpponentMonster,
+};
