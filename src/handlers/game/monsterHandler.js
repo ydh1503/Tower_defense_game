@@ -86,9 +86,25 @@ export const deadMonsterHandler = (uuid, payload) => {
 };
 
 export const attackedMonsterHandler = (uuid, payload) => {
-  const { gameId, towerIndex, monsterIndex } = payload;
+  const { gameId, towerIndex, monsterIndex, monsterId, level } = payload;
 
   const gameSession = getGameSession(gameId);
+
+  const monsterData = gameSession.gameManager.getObject(
+    uuid,
+    GAME_OBJECT_TYPES.OBJECT_ARRAY.MONSTERS,
+  );
+
+  if (
+    monsterData[monsterIndex].monsterId !== monsterId &&
+    monsterData[monsterIndex].level !== level
+  ) {
+    return {
+      status: 'fail',
+      message: '현재 생성되어 있는 올바른 몬스터가 아닙니다.',
+    };
+  }
+
   const opponentUserSocket = gameSession.getOpponentUserSocket(uuid);
   sendNotification(
     opponentUserSocket,

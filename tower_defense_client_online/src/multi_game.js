@@ -175,7 +175,13 @@ function gameLoop() {
         Math.pow(tower.x - monster.x, 2) + Math.pow(tower.y - monster.y, 2),
       );
       if (distance < tower.range) {
-        sendEvent(12, { gameId, towerIndex, monsterIndex });
+        sendEvent(12, {
+          gameId,
+          towerIndex,
+          monsterIndex,
+          monsterId: monster.monsterNumber,
+          level: monster.level,
+        });
       }
     });
   });
