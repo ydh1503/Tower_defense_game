@@ -12,3 +12,11 @@ export const foundMatchNotification = (socket, userData, opponentData, gameId) =
   };
   return sendNotification(socket, payload, 'found matching', 'matchFound');
 };
+
+export const endGameNotification = (socket, isWin, score) => {
+  const payload = {
+    isWin,
+    score,
+  };
+  return sendNotification(socket, payload, 'game over', 'gameOver');
+};

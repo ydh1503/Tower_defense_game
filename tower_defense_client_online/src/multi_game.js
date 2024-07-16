@@ -327,24 +327,22 @@ Promise.all([
 
   serverSocket.on('gameOver', (data) => {
     bgm.pause();
-    const { isWin } = data;
-    const winSound = new Audio('sounds/win.wav');
-    const loseSound = new Audio('sounds/lose.wav');
-    winSound.volume = 0.3;
-    loseSound.volume = 0.3;
+    const { isWin } = data.payload;
+    let sound;
+    let message;
     if (isWin) {
-      winSound.play().then(() => {
-        alert('당신이 게임에서 승리했습니다!');
-        // TODO. 게임 종료 이벤트 전송
-        location.reload();
-      });
+      sound = new Audio('sounds/win.wav');
+      message = '당신이 게임에서 승리했습니다!';
     } else {
-      loseSound.play().then(() => {
-        alert('아쉽지만 대결에서 패배하셨습니다! 다음 대결에서는 꼭 이기세요!');
-        // TODO. 게임 종료 이벤트 전송
-        location.reload();
-      });
+      sound = new Audio('sounds/lose.wav');
+      message = '아쉽지만 대결에서 패배하셨습니다! 다음 대결에서는 꼭 이기세요!';
     }
+    sound.volume = 0.3;
+    sound.play().then(() => {
+      alert(message);
+      sendEvent(3, { gameId });
+      location.reload();
+    });
   });
 });
 

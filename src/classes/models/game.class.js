@@ -1,4 +1,8 @@
-import { foundMatchNotification } from '../../utils/notification/game.notification.js';
+import GAME_OBJECT_TYPES from '../../constants/gameObjectTypes.js';
+import {
+  endGameNotification,
+  foundMatchNotification,
+} from '../../utils/notification/game.notification.js';
 import GameManager from '../managers/game.manager.js';
 // import IntervalManager from '../managers/interval.manager.js';
 
@@ -40,6 +44,21 @@ class Game {
 
       foundMatchNotification(user.socket, userData, opponentData, this.id);
     });
+  }
+
+  endGame() {
+    const gameLogs = [];
+    const endTime = Date.now();
+    this.users.forEach((user) => {
+      const score = this.gameManager.getObject(user.id, GAME_OBJECT_TYPES.OBJECT.SCORE);
+      const isWin =
+        this.gameManager.getObject(user.id, GAME_OBJECT_TYPES.OBJECT.BASE).hp > 0 ? true : false;
+
+      endGameNotification(user.socket, isWin, score);
+      gameLogs.push({ userId: user.id, score, isWin });
+    });
+
+    // createGameLog(this.id, gameLogs[0], gameLogs[1], endTime);
   }
 }
 

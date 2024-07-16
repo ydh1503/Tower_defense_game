@@ -8,8 +8,7 @@ export const attackBaseHandler = (userId, payload) => {
 
   const base = gameSession.gameManager.getObject(userId, GAME_OBJECT_TYPES.OBJECT.BASE);
   if (base.takeDamage(damage)) {
-    // 게임 종료 코드 추가
-    return { status: 'success', message: 'Game end' };
+    gameSession.endGame();
   }
 
   const opponentUserSocket = gameSession.getOpponentUserSocket(userId);
