@@ -1,8 +1,4 @@
-import GAME_OBJECT_TYPES from '../../constants/gameObjectTypes.js';
-import {
-  foundMatchNotification,
-  sendNotification,
-} from '../../utils/notification/game.notification.js';
+import { foundMatchNotification } from '../../utils/notification/game.notification.js';
 import GameManager from '../managers/game.manager.js';
 // import IntervalManager from '../managers/interval.manager.js';
 
@@ -44,25 +40,6 @@ class Game {
 
       foundMatchNotification(user.socket, userData, opponentData, this.id);
     });
-  }
-
-  updateBaseHP(userId, amount) {
-    const base = this.gameManager.getObject(userId, GAME_OBJECT_TYPES.OBJECT.BASE);
-    if (base.takeDamage(amount)) {
-      // 게임 종료 코드 추가
-    } else {
-      this.users.forEach((opponent, i) => {
-        if (opponent.id !== userId) {
-          sendNotification(
-            opponent.socket,
-            { opponentIndex: i, baseHp: base.hp },
-            `opponent${i} base is attacked`,
-          );
-        }
-      });
-    }
-
-    return base.hp;
   }
 }
 

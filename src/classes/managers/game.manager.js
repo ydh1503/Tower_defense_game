@@ -2,6 +2,7 @@
 
 import GAME_OBJECT_TYPES from '../../constants/gameObjectTypes.js';
 import Base from '../models/gameObject/base.class.js';
+import Tower from '../models/gameObject/tower.class.js';
 import Path from '../models/gameObject/path.class.js';
 import BaseManager from './base.manager.js';
 
@@ -26,11 +27,15 @@ class GameManager extends BaseManager {
         GAME_OBJECT_TYPES.OBJECT.BASE,
         new Base(path[path.length - 1].x, path[path.length - 1].y, BASE_MAX_HP),
       );
-    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.TOWERS, []);
+    const towers = [];
+    for (let initTower = 0; initTower < 2; initTower++) {
+      towers.push(new Tower(path));
+    }
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.TOWERS, towers);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT_ARRAY.MONSTERS, []);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.LEVEL, 0);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.SCORE, 0);
-    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.GOLD, 0);
+    this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.GOLD, 1000);
     this.gameObjects.get(playerId).set(GAME_OBJECT_TYPES.OBJECT.KILLCOUNT, 0);
   }
 
