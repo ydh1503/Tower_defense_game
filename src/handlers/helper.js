@@ -1,4 +1,5 @@
 import { config } from '../config/config.js';
+import { findUserByID } from '../db/user/user.db.js';
 import { getMatchingSession } from '../session/matching.session.js';
 import { addUser } from '../session/user.session.js';
 import handlerMappings from './handlerMapping.js';
@@ -14,8 +15,9 @@ export const handleConnection = async (socket, userUUID) => {
   console.log(`New user connected: ${userUUID} with socket ID ${socket.id}`);
 
   const user = addUser(socket, userUUID);
+  // const highScore = (await findUserByID(userUUID).highScore) || 0;
 
-  socket.emit('connection', { uuid: userUUID });
+  socket.emit('connection', { uuid: userUUID, highScore: 100 });
 };
 
 export const handleEvent = async (io, socket, data) => {

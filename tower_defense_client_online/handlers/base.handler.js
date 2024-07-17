@@ -1,11 +1,11 @@
 import { updateBaseHp } from '../src/multi_game.js';
 
 export const attackBaseHandler = (payload) => {
-  const { baseHp } = payload;
-  updateBaseHp(baseHp);
+  const { baseHp, monsterId } = payload;
+  updateBaseHp(baseHp, monsterId);
 };
 
 export const attackOpponentBaseHandler = (payload) => {
-  const { baseHp } = payload;
-  updateBaseHp(baseHp, true);
+  const { baseHp, monsterId } = payload;
+  updateBaseHp(baseHp, monsterId, true);
 };

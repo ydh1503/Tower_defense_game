@@ -16,6 +16,7 @@ export const updateUserScore = async (score, id) => {
   await pools.USER_DB.query(SQL_QUERIES.UPDATE_USER_SCORE, [score, id]); // 사용자의 점수 업데이트
 };
 
+// 수정 필요
 export const registerUser = async (id, password) => {
   await pools.USER_DB.query(SQL_QUERIES.INSERT_USER, [id, password]); // 새로운 사용자 등록
 };
