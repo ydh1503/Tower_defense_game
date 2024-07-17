@@ -3,10 +3,10 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 
-// if (!localStorage.getItem('token')) {
-//   alert('로그인이 필요합니다.');
-//   location.href = '/login';
-// }
+if (!getCookieValue('authorization1')) {
+  alert('로그인이 필요합니다.');
+  location.href = '/login.html';
+}
 
 let serverSocket;
 const canvas = document.getElementById('gameCanvas');
@@ -23,10 +23,10 @@ const loader = document.getElementsByClassName('loader')[0];
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
 // 서버 데이터
-let userId;
 let gameId;
 
 // 게임 데이터
+let isPlay = false;
 let towerCost = 0; // 타워 구입 비용
 let monsterSpawnInterval = 1000; // 몬스터 생성 주기
 
@@ -74,6 +74,15 @@ for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
 }
 
 let bgm;
+
+function getCookieValue(name) {
+  const regex = new RegExp(`(^| )${name}=([^;]+)`);
+  const match = document.cookie.match(regex);
+  if (match) {
+    return match[2];
+  }
+  return;
+}
 
 function initMap() {
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // 배경 이미지 그리기
@@ -224,13 +233,17 @@ function gameLoop() {
 
   opponentBase.draw(opponentCtx, baseImage, true);
 
-  requestAnimationFrame(gameLoop); // 지속적으로 다음 프레임에 gameLoop 함수 호출할 수 있도록 함
+  if (isPlay) {
+    requestAnimationFrame(gameLoop); // 지속적으로 다음 프레임에 gameLoop 함수 호출할 수 있도록 함
+  }
 }
 
 function initGame() {
   if (isInitGame) {
     return;
   }
+  isPlay = true;
+
   bgm = new Audio('sounds/bgm.mp3');
   bgm.loop = true;
   bgm.volume = 0.2;
@@ -253,27 +266,24 @@ Promise.all([
 ]).then(() => {
   serverSocket = io('http://localhost:3000', {
     auth: {
-      token: localStorage.getItem('token'),
+      token: getCookieValue('authorization1'),
     },
   });
 
   serverSocket.on('connect_error', (err) => {
     if (err.message === 'Authentication error') {
       alert('잘못된 토큰입니다.');
-      location.href = '/login';
+      location.href = '/login.html';
     }
   });
 
   serverSocket.on('connect', () => {
-    // TODO. 서버와 연결되면 대결 대기열 큐 진입 (#2 대결 시작 브랜치)
-    // 수정 -> 서버와 연결된 후 대결 대기열 큐에 추가를 요청하는 이벤트 발송 (#15 게임 초기화 브랜치)
+    sendEvent(2, { width: canvas.width, height: canvas.height });
   });
 
   serverSocket.on('connection', (data) => {
-    userId = data.uuid;
+    console.log('!!!!!!!!!!!!!!!' + data.highScore);
     highScore = data.highScore;
-    console.log(`connection completed (id: ${userId})`);
-    sendEvent(2, { width: canvas.width, height: canvas.height });
   });
 
   serverSocket.on('matchFound', (data) => {
@@ -338,6 +348,7 @@ Promise.all([
     }
     sound.volume = 0.3;
     sound.play().then(() => {
+      isPlay = false;
       alert(message);
       sendEvent(3, { gameId });
       location.reload();
@@ -361,7 +372,6 @@ document.body.appendChild(buyTowerButton);
 
 function sendEvent(handlerId, payload) {
   serverSocket.emit('event', {
-    userId,
     clientVersion: '1.0.0',
     handlerId,
     payload,

@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import initSocket from './init/socket.js';
 import { config } from './config/config.js';
+import accountsRouter from './routers/accounts.router.js';
 
 const app = express();
 const server = createServer(app);
@@ -10,6 +11,7 @@ const server = createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/api', [accountsRouter]);
 app.use(express.static('tower_defense_client_online'));
 
 // 소켓 추가

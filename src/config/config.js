@@ -12,6 +12,7 @@ import {
   DB2_USER,
   HOST,
   PORT,
+  SECRET_KEY,
 } from '../constants/env.js';
 
 export const config = {
@@ -37,5 +38,8 @@ export const config = {
       host: DB2_HOST,
       port: DB2_PORT,
     },
+  },
+  key: {
+    secret_key: SECRET_KEY,
   },
 };
