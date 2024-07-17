@@ -28,7 +28,7 @@ let gameId;
 // 게임 데이터
 let isPlay = false;
 let towerCost = 0; // 타워 구입 비용
-let monsterSpawnInterval = 1000; // 몬스터 생성 주기
+let monsterSpawnInterval = 3000; // 몬스터 생성 주기
 
 // 유저 데이터
 let userGold = 0; // 유저 골드
@@ -282,7 +282,6 @@ Promise.all([
   });
 
   serverSocket.on('connection', (data) => {
-    console.log('!!!!!!!!!!!!!!!' + data.highScore);
     highScore = data.highScore;
   });
 
