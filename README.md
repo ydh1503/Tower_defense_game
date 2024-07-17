@@ -98,43 +98,6 @@ BackEnd Skills
 ![image](https://github.com/user-attachments/assets/d8591acc-e545-422b-838c-a84511a0f4ae) ![image](https://github.com/user-attachments/assets/405b3f5d-9691-4f8e-8ffe-b9ab348dadd4)
 ![image](https://github.com/user-attachments/assets/4dcc7908-7662-493f-84aa-2cf8cba137d3)
 
-폴더 구조
-
-─Tower_defense_game
-    ├─src
-    │  ├─classes
-    │  │  ├─managers
-    │  │  └─models
-    │  │      └─gameObject
-    │  ├─config
-    │  ├─constants
-    │  ├─db
-    │  │  ├─game
-    │  │  ├─migration
-    │  │  ├─sql
-    │  │  └─user
-    │  ├─handlers
-    │  │  └─game
-    │  ├─init
-    │  ├─protobuf
-    │  │  ├─notification
-    │  │  ├─request
-    │  │  └─response
-    │  ├─routers
-    │  ├─session
-    │  └─utils
-    │      ├─db
-    │      ├─error
-    │      ├─middlewares
-    │      ├─notification
-    │      └─parser
-    └─tower_defense_client_online
-        ├─handlers
-        ├─images
-        ├─sounds
-        └─src
-
-
 게임 방법
 회원가입 및 로그인
 **Tower_defense_game/src/routers/account.router.js 참조**
