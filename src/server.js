@@ -11,6 +11,7 @@ const server = createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/api', [accountsRouter]);
 app.use(express.static('tower_defense_client_online'));
 
 // 소켓 추가
@@ -24,4 +25,3 @@ initSocket(server)
     console.error(e);
     process.exit(1);
   });
-
