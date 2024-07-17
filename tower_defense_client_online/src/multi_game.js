@@ -75,6 +75,14 @@ for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
 
 let bgm;
 
+function getCookieValue(name) {
+  const regex = new RegExp(`(^| )${name}=([^;]+)`);
+  const match = document.cookie.match(regex);
+  if (match) {
+    return match[2];
+  }
+}
+
 function initMap() {
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // 배경 이미지 그리기
   drawPath(monsterPath, ctx);
@@ -253,14 +261,14 @@ Promise.all([
 ]).then(() => {
   serverSocket = io('http://localhost:3000', {
     auth: {
-      token: localStorage.getItem('token'),
+      token: getCookieValue('authorization1'),
     },
   });
 
-  serverSocket.on('connect_error', (err) => {
+  serverSocket.on('connection_error', (err) => {
     if (err.message === 'Authentication error') {
       alert('잘못된 토큰입니다.');
-      location.href = '/login';
+      location.href = '/login.html';
     }
   });
 
@@ -361,7 +369,6 @@ document.body.appendChild(buyTowerButton);
 
 function sendEvent(handlerId, payload) {
   serverSocket.emit('event', {
-    userId,
     clientVersion: '1.0.0',
     handlerId,
     payload,

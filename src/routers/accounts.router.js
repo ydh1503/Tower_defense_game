@@ -1,15 +1,16 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
-// import configs from '../util/config.js'; 해당 파일 존재하지 않음
+import { config } from '../config/config.js';
 import jwt from 'jsonwebtoken';
-import { findUserByID, getPasswordById, registerUser } from '../db/user/user.db.js';
+import { findUserByName, registerUser } from '../db/user/user.db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const accountRouter = express.Router();
 
 const register = async (req, res, next) => {
-  const { user_id, password } = req.body;
+  const { username, password } = req.body;
 
-  if (!user_id) {
+  if (!username) {
     return res.status(400).json({ errorMessage: '유저 아이디를 입력해 주세요!' });
   }
   if (!password) {
@@ -20,21 +21,23 @@ const register = async (req, res, next) => {
     if (password == null || password == undefined) {
       return res.status(400).json({ errorMessage: '사용할 수 없는 문구가 포함되어 있습니다!' });
     }
-    const regex = /^(?=\S+$).{8,}$/;
+    const regex = /^(?=\S+$).{4,}$/;
     return regex.test(password);
   };
   if (!validatePassword(password)) {
     return res.status(400).json({ errorMessage: '비밀번호 유효성 검사 실패!' });
   }
+
   try {
-    const exists = await findUserByID(user_id);
+    const exists = await findUserByName(username);
     if (exists) {
       return res.status(409).json({ errorMessage: '이미 존재하는 사용자입니다!.' });
     }
 
+    const userUUID = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await registerUser(user_id, hashedPassword);
+    await registerUser(userUUID, username, hashedPassword);
 
     return res.status(201).json({ message: '회원가입 완료' });
   } catch (error) {
@@ -45,27 +48,24 @@ const register = async (req, res, next) => {
 
 const login = async (req, res) => {
   try {
-    // const jwtSecret = configs.jwtSecret; configs 변수 import 경로 변경 후 사용
-    const { userId, password } = req.body;
+    const { username, password } = req.body;
 
-    // const exists = await findUserByID(userId);
-    // if (!exists) {
-    //   return res.status(409).json({ errorMessage: '존재하지 않는 사용자 입니다!.' });
-    // }
+    const user = await findUserByName(username);
+    if (!user) {
+      return res.status(409).json({ errorMessage: '존재하지 않는 사용자 입니다!.' });
+    }
 
-    // const hashedPassword = await getPasswordById(userId);
-    // if (!hashedPassword) {
-    //   return res.status(404).json({ errorMessage: '서버 DB 오류 : 저장된 비밀번호를 찾을 수 없습니다' });
-    // }
-    // const passwordMatch = await bcrypt.compare(password, hashedPassword);
-    // if (!passwordMatch) {
-    //   return res.status(401).json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
-    // }
-    const token = jwt.sign({ userId }, jwtSecret, {
+    const hashedPassword = user.pw;
+    const passwordMatch = await bcrypt.compare(password, hashedPassword);
+    if (!passwordMatch) {
+      return res.status(401).json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
+    }
+
+    const token = jwt.sign({ id: user.id }, config.key.secret_key, {
       //토큰에 담는 정보
       expiresIn: '24h',
     });
-    res.status(200).json({ message: '로그인 성공 인증토큰 발행 완료', token: token });
+    res.status(200).json({ message: '로그인 성공 인증토큰 발행 완료', token });
   } catch (error) {
     console.log('서버 에러 발생', error);
     res.status(500).json({ errorMessage: error.message });
