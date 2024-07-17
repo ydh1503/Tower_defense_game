@@ -15,9 +15,10 @@ export const handleConnection = async (socket, userUUID) => {
   console.log(`New user connected: ${userUUID} with socket ID ${socket.id}`);
 
   const user = addUser(socket, userUUID);
-  // const highScore = (await findUserByID(userUUID).highScore) || 0;
+  const highScore = await findUserByID(userUUID);
+  console.log(highScore.high_score);
 
-  socket.emit('connection', { uuid: userUUID, highScore: 100 });
+  socket.emit('connection', { uuid: userUUID, highScore: highScore.high_score });
 };
 
 export const handleEvent = async (io, socket, userUUID, data) => {

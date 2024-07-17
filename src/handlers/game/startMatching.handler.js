@@ -1,5 +1,5 @@
-import { getMatchingSession } from '../session/matching.session.js';
-import { getUserById } from '../session/user.session.js';
+import { getMatchingSession } from '../../session/matching.session.js';
+import { getUserById } from '../../session/user.session.js';
 
 const startMatchingHandler = (userId, payload) => {
   const user = getUserById(userId);

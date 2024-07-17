@@ -2,11 +2,11 @@ import {
   attackedMonsterHandler,
   deadMonsterHandler,
   spawnMonsterHandler,
-} from './game/monsterHandler.js';
-import startMatchingHandler from './startMatching.handler.js';
+} from './game/monster.handler.js';
+import startMatchingHandler from './game/startMatching.handler.js';
 import { purchaseTowerHandler } from './game/tower.handler.js';
 import { attackBaseHandler } from './game/base.handler.js';
-import endGameHandler from './endGame.handler.js';
+import endGameHandler from './game/endGame.handler.js';
 
 const handlerMappings = {
   // 1: 함수이름,

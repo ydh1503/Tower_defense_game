@@ -3,10 +3,10 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 
-// if (!localStorage.getItem('token')) {
-//   alert('로그인이 필요합니다.');
-//   location.href = '/login';
-// }
+if (!getCookieValue('authorization2')) {
+  alert('로그인이 필요합니다.');
+  location.href = '/login.html';
+}
 
 let serverSocket;
 const canvas = document.getElementById('gameCanvas');
@@ -23,7 +23,6 @@ const loader = document.getElementsByClassName('loader')[0];
 const NUM_OF_MONSTERS = 5; // 몬스터 개수
 
 // 서버 데이터
-let userId;
 let gameId;
 
 // 게임 데이터
@@ -78,9 +77,11 @@ let bgm;
 function getCookieValue(name) {
   const regex = new RegExp(`(^| )${name}=([^;]+)`);
   const match = document.cookie.match(regex);
+  console.log('!!!!!' + match[2]);
   if (match) {
     return match[2];
   }
+  return;
 }
 
 function initMap() {
@@ -265,7 +266,7 @@ Promise.all([
     },
   });
 
-  serverSocket.on('connection_error', (err) => {
+  serverSocket.on('connect_error', (err) => {
     if (err.message === 'Authentication error') {
       alert('잘못된 토큰입니다.');
       location.href = '/login.html';
@@ -273,14 +274,6 @@ Promise.all([
   });
 
   serverSocket.on('connect', () => {
-    // TODO. 서버와 연결되면 대결 대기열 큐 진입 (#2 대결 시작 브랜치)
-    // 수정 -> 서버와 연결된 후 대결 대기열 큐에 추가를 요청하는 이벤트 발송 (#15 게임 초기화 브랜치)
-  });
-
-  serverSocket.on('connection', (data) => {
-    userId = data.uuid;
-    highScore = data.highScore;
-    console.log(`connection completed (id: ${userId})`);
     sendEvent(2, { width: canvas.width, height: canvas.height });
   });
 

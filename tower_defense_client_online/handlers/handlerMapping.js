@@ -6,14 +6,14 @@ import {
   deadOpponentMonsterHandler,
   spawnMonsterHandler,
   spawnOpponentMonsterHandler,
-} from './monsterHandler.js';
-import { cliTowerhandler } from './cliTower.handler.js';
+} from './monster.handler.js';
+import { towerHandler } from './tower.handler.js';
 
 const handlerMappings = {
   //1: 함수 이름,
   8: spawnMonsterHandler,
   9: spawnOpponentMonsterHandler,
-  11: cliTowerhandler,
+  11: towerHandler,
   12: attackedMonsterHandler,
   13: attackedOpponentMonsterHandler,
   16: deadMonsterHandler,
