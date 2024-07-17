@@ -1,6 +1,4 @@
 # Tower_defense_game
-# Tower_defense_game
-\# Tower_defense_game
 
 Tower_defense_game
 
@@ -135,15 +133,6 @@ BackEnd Skills
         ├─images
         ├─sounds
         └─src
-        <>index.html
-        <>login.html
-        <>login2.html
-        <>register.html
-        .gitignore
-        .prettierrc
-        {}package-lock.json
-        {}package.json
-        README.md
 
 
 게임 방법
