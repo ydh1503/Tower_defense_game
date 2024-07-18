@@ -1,5 +1,4 @@
 import { handleDisconnect, handleConnection, handleEvent } from './helper.js';
-import { v4 as uuidv4 } from 'uuid';
 
 const registerHandler = async (io) => {
   await io.on('connection', async (socket) => {
