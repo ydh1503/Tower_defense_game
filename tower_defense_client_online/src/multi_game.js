@@ -278,10 +278,11 @@ Promise.all([
   });
 
   serverSocket.on('connect', () => {
-    sendEvent(2, { width: canvas.width, height: canvas.height });
+    console.log('success connect');
   });
 
   serverSocket.on('connection', (data) => {
+    sendEvent(2, { width: canvas.width, height: canvas.height });
     highScore = data.highScore;
   });
 
