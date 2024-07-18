@@ -1,7 +1,7 @@
 import { config } from '../config/config.js';
 import { findUserByID } from '../db/user/user.db.js';
 import { getMatchingSession } from '../session/matching.session.js';
-import { addUser } from '../session/user.session.js';
+import { addUser, removeUser } from '../session/user.session.js';
 import handlerMappings from './handlerMapping.js';
 
 export const handleDisconnect = async (socket, uuid) => {
@@ -9,6 +9,7 @@ export const handleDisconnect = async (socket, uuid) => {
 
   const matchingSession = getMatchingSession();
   matchingSession.removeUser(uuid);
+  removeUser(socket);
 };
 
 export const handleConnection = async (socket, userUUID) => {
