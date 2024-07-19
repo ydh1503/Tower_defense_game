@@ -8,6 +8,10 @@ class Matching {
     this.users = [];
   }
 
+  has(userId) {
+    return this.users.some((user) => user.id === userId);
+  }
+
   addUser(user) {
     this.users.push(user);
     this.matchUsers();
