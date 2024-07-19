@@ -10,7 +10,9 @@ const startMatchingHandler = (userId, payload) => {
   user.canvas = { width: payload.width, height: payload.height };
 
   const matchingSession = getMatchingSession();
-  matchingSession.addUser(user);
+  if (!matchingSession.has(userId)) {
+    matchingSession.addUser(user);
+  }
 
   return { status: 'success', message: 'start matching', timestamp: Date.now() };
 };
